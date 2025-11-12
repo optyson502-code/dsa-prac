@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Offline Code Vault</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0f172a;
+      color: #e2e8f0;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #1e293b;
+      color: #f8fafc;
+      text-align: center;
+      padding: 1rem;
+      font-size: 1.5rem;
+      font-weight: bold;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+    .container {
+      max-width: 900px;
+      margin: 1rem auto;
+      padding: 1rem;
+      background-color: #1e293b;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(255,255,255,0.1);
+    }
+    .snippet {
+      background-color: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+    }
+    .snippet-title {
+      font-weight: bold;
+      color: #38bdf8;
+      margin-bottom: 0.5rem;
+    }
+    pre {
+      background-color: #020617;
+      color: #f1f5f9;
+      overflow-x: auto;
+      padding: 1rem;
+      border-radius: 8px;
+    }
+    button.toggle-theme {
+      background-color: #334155;
+      color: #f1f5f9;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <header>Offline Code Vault</header>
+  <button class="toggle-theme" onclick="toggleTheme()">Toggle Light/Dark</button>
+  <div class="container" id="codeContainer"></div>
+  <script>
+    const snippets = [
+      { title: 'Stack using Array', code: `#include <stdio.h>\n#define MAX 5\nint queue[MAX], front=-1, rear=-1;\nvoid enqueue(){int x;if(rear==MAX-1){printf("Queue Full!\\n");return;}if(front==-1)front=0;printf("Enter Element To Add:");scanf("%d",&x);queue[++rear]=x;}\nvoid dequeue(){if(front==-1||front>rear){printf("Queue Empty!\\n");return;}printf("Removed:%d\\n",queue[front++]);}\nvoid display(){if(front==-1||front>rear){printf("Queue Empty!\\n");return;}printf("Queue:");for(int i=front;i<=rear;i++){printf("%d ",queue[i]);}printf("\\n");}\nint main(){int choice;do{printf("1.Enqueue 2.Dequeue 3.Display 4.Exit\\n");scanf("%d",&choice);switch(choice){case 1:enqueue();break;case 2:dequeue();break;case 3:display();break;}}while(choice!=4);return 0;}` },
+      { title: 'Single Link Operation', code: `#include <stdio.h>\n#include <stdlib.h>\nstruct Node {int data;struct Node *next;};\nstruct Node *head=NULL;\nvoid insertFront(int x){struct Node *newNode=malloc(sizeof(struct Node));newNode->data=x;newNode->next=head;head=newNode;}\nvoid insertEnd(int x){struct Node *newNode=malloc(sizeof(struct Node));newNode->data=x;newNode->next=NULL;if(head==NULL){head=newNode;return;}struct Node *temp=head;while(temp->next!=NULL)temp=temp->next;temp->next=newNode;}\nvoid display(){struct Node *temp=head;while(temp!=NULL){printf("%d ",temp->data);temp=temp->next;}printf("\\n");}\nint main(){insertEnd(10);insertEnd(20);insertFront(5);display();return 0;}` },
+      { title: 'Binary Search Tree', code: `#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\ntypedef struct Node {char name[50];struct Node *left,*right;} Node;\nNode* create(char name[]){Node* newnode=(Node*)malloc(sizeof(Node));strcpy(newnode->name,name);newnode->left=newnode->right=NULL;return newnode;}\nNode* Insert(Node* root,char name[]){if(root==NULL)return create(name);if(strcmp(name,root->name)<0)root->left=Insert(root->left,name);else root->right=Insert(root->right,name);return root;}\nvoid inorder(Node* root){if(root){inorder(root->left);printf("%s ",root->name);inorder(root->right);}}\nint main(){Node* root=NULL;root=Insert(root,"Harish");root=Insert(root,"Anuj");inorder(root);return 0;}` },
+      { title: 'Graph Traversal', code: `#include <stdio.h>\n#define MAX 10\nint adj[MAX][MAX],visited[MAX],n;\nvoid dfs(int v){printf("%d ",v);visited[v]=1;for(int i=0;i<n;i++){if(adj[v][i]==1&&!visited[i])dfs(i);}}\nint main(){printf("Graph traversal sample");return 0;}` },
+      { title: 'Pattern Printing', code: `#include <stdio.h>\nvoid rightAngleTriangle(int n){for(int i=1;i<=n;i++){for(int j=1;j<=i;j++)printf("%d",j);printf("\\n");}}\nint main(){rightAngleTriangle(4);return 0;}` },
+      { title: 'Search Technique', code: `#include <stdio.h>\n#include <string.h>\nint sequentialSearch(char arr[][50],int n,char key[]){for(int i=0;i<n;i++){if(strcmp(arr[i],key)==0)return i;}return -1;}\nint main(){char names[3][50]={"A","B","C"};printf("%d",sequentialSearch(names,3,"B"));return 0;}` },
+      { title: 'Sorting Algorithm', code: `#include <stdio.h>\nvoid bubbleSort(int arr[],int n){for(int i=0;i<n-1;i++)for(int j=0;j<n-i-1;j++)if(arr[j]>arr[j+1]){int t=arr[j];arr[j]=arr[j+1];arr[j+1]=t;}}\nint main(){int arr[5]={5,4,3,2,1};bubbleSort(arr,5);for(int i=0;i<5;i++)printf("%d ",arr[i]);}` },
+      { title: 'Stack or Queue using Linked List', code: `#include <stdio.h>\n#include <stdlib.h>\nstruct Node{int data;struct Node*next;};struct Node*top=NULL;\nvoid push(int x){struct Node*temp=malloc(sizeof(struct Node));temp->data=x;temp->next=top;top=temp;}\nvoid pop(){if(top==NULL)return;struct Node*temp=top;top=top->next;free(temp);}\nint main(){push(10);push(20);pop();return 0;}` },
+      { title: 'Decimal to Binary Conversion using Stack', code: `#include <stdio.h>\n#define MAX 100\nint stack[MAX],top=-1;\nvoid push(int x){if(top==MAX-1)return;stack[++top]=x;}\nint pop(){return(top==-1)?-1:stack[top--];}\nint main(){int decimal=10;while(decimal>0){push(decimal%2);decimal/=2;}while(top!=-1)printf("%d",pop());return 0;}` }
+    ];
+
+    const container = document.getElementById('codeContainer');
+    snippets.forEach(s => {
+      const div = document.createElement('div');
+      div.className = 'snippet';
+      div.innerHTML = `<div class='snippet-title'>${s.title}</div><pre>${s.code}</pre>`;
+      container.appendChild(div);
+    });
+
+    function toggleTheme(){
+      const body=document.body;
+      if(body.classList.contains('light')){
+        body.classList.remove('light');
+        body.style.backgroundColor='#0f172a';
+        body.style.color='#e2e8f0';
+      } else {
+        body.classList.add('light');
+        body.style.backgroundColor='#f1f5f9';
+        body.style.color='#0f172a';
+      }
+    }
+  </script>
+</body>
+</html>
